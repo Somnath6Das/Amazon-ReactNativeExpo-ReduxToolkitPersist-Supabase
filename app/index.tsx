@@ -1,5 +1,4 @@
-import { AmazonEmber } from "@/utils/Constant";
-import { Text } from "react-native";
+import { Redirect } from "expo-router";
 export default function Home() {
-  return <Text style={{ fontFamily: AmazonEmber }}>Home Page</Text>;
+  return <Redirect href="/(tabs)" />;
 }
