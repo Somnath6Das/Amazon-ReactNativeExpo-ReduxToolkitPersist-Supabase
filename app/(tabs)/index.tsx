@@ -1,10 +1,19 @@
+import DefaultButton from "@/components/Shared/DefaultButton";
 import { DeliveryLocation } from "@/components/Shared/DeliveryLocation";
 import { HeaderTabsProps } from "@/components/Shared/header/HeaderTabs";
-import { useNavigation } from "expo-router";
+import HomeCarousel from "@/components/Shared/Screen/HomeCarousel";
+import HomeSuggestions from "@/components/Shared/Screen/HomeSuggestions";
+import ProductDealCard from "@/components/Shared/Screen/ProductDealCard";
+import { deals } from "@/dummy_data/product_deal";
+import { Product } from "@/types";
+import { AmazonEmberBold } from "@/utils/Constant";
+import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { Alert, ScrollView } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
+
 export default function Home() {
   const navigation = useNavigation();
+  const session = true;
   const tabs: HeaderTabsProps["tabs"] = [
     {
       active: true,
@@ -26,6 +35,10 @@ export default function Home() {
       headerTabsProps: { tabs },
     });
   });
+  const onProductPress = ({ id }: Product) => {
+    router.push(`/product/${id}`);
+  };
+  const onClickAuth = () => router.push("/(auth)");
   return (
     <ScrollView
       scrollEnabled
@@ -35,6 +48,47 @@ export default function Home() {
       showsVerticalScrollIndicator={false}
     >
       <DeliveryLocation />
+      <HomeCarousel />
+      <HomeSuggestions />
+      <View
+        style={{
+          marginTop: "40%",
+          backgroundColor: "white",
+          width: "100%",
+          padding: 20,
+          gap: 20,
+        }}
+      >
+        <Text
+          style={{
+            alignSelf: "flex-start",
+            fontFamily: AmazonEmberBold,
+            fontSize: 20,
+          }}
+        >
+          {session ? "Deals for you" : "Sign in for your best experience"}
+        </Text>
+        {!session ? (
+          <View
+            style={{
+              justifyContent: "space-between",
+              gap: 20,
+              flexWrap: "wrap",
+              flexDirection: "row",
+            }}
+          >
+            {deals.map((product) => (
+              <ProductDealCard
+                key={product.id}
+                product={product}
+                onPress={() => onProductPress(product)}
+              />
+            ))}
+          </View>
+        ) : (
+          <DefaultButton onPress={onClickAuth}>Sign in Securely</DefaultButton>
+        )}
+      </View>
     </ScrollView>
   );
 }
