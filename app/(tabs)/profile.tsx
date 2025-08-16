@@ -10,7 +10,7 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Profile() {
   const navigation = useNavigation();
-  const session = true;
+  const session = false;
   const isSeller = true;
   const undeliveredCount = 0;
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -18,9 +18,9 @@ export default function Profile() {
     bottomSheetRef.current?.expand();
   }, []);
   const onClickLogin = () => router.push("/(auth)");
-  const onClickSignUp = () => router.push("/(auth)");
+  const onClickSignUp = () => router.push("/(auth)/signup");
   const clickToOrdered = () => router.push("/(buyer_zone)/my_order");
-  const clickToSeller = () => router.push("/(buyer_zone)/my_order");
+  const clickToSeller = () => router.push("/(seller_zone)/seller_page");
   useEffect(() => {
     navigation.setOptions({
       headerSearchShown: Boolean(session),
@@ -33,7 +33,7 @@ export default function Profile() {
           )
         : null,
     });
-  });
+  }, [navigation, session]);
   useFocusEffect(
     useCallback(() => {
       return () => {
