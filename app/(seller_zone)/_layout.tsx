@@ -3,10 +3,12 @@ import {
   HeaderLeftBack,
   HeaderTitle,
 } from "@/components/Shared/header/HeaderTitleBack";
+import { RootState } from "@/store";
 import { AmazonEmberBold } from "@/utils/Constant";
 import { Entypo } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
 import { Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 interface Tab {
   name: string;
@@ -15,7 +17,9 @@ interface Tab {
 
 export default function TabLayout() {
   const onGoBack = () => router.back();
-  const undeliverdCount = 0;
+  const unshippedCount = useSelector(
+    (state: RootState) => state.shippedCount.shippedCount
+  );
   const tabs: Tab[] = [
     {
       name: "seller_page",
@@ -73,13 +77,13 @@ export default function TabLayout() {
                       position: "absolute",
                       top: 8,
                       backgroundColor:
-                        undeliverdCount === 0 ? "transparent" : "#de1b1bff",
+                        unshippedCount === 0 ? "transparent" : "#de1b1bff",
                       fontFamily: AmazonEmberBold,
                       fontSize: 12,
-                      color: undeliverdCount === 0 ? "transparent" : "white",
+                      color: unshippedCount === 0 ? "transparent" : "white",
                     }}
                   >
-                    {undeliverdCount}
+                    {unshippedCount}
                   </Text>
                 )}
               </View>

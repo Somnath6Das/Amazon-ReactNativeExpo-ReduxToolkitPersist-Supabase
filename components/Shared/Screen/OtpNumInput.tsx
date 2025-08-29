@@ -5,14 +5,14 @@ interface Props extends TextInputProps {
   onTextChange: (value: string) => void;
 }
 
-export default function OtpNumInput({ onChangeText }: Props) {
+export default function OtpNumInput({ onTextChange }: Props) {
   return (
     <View style={{ width: "100%", alignItems: "center" }}>
       <OtpInput
         focusColor={"#f1b023ff"}
         type="numeric"
         numberOfDigits={6}
-        onTextChange={onChangeText}
+        onTextChange={onTextChange}
         autoFocus={true}
         theme={{
           containerStyle: {

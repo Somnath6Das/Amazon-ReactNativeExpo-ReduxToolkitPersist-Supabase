@@ -1,5 +1,6 @@
 import DefaultButton from "@/components/Shared/DefaultButton";
 import OtpNumInput from "@/components/Shared/Screen/OtpNumInput";
+import { supabase } from "@/supabase";
 import { AmazonEmber, AmazonEmberLight } from "@/utils/Constant";
 import { Checkbox } from "expo-checkbox";
 import { router } from "expo-router";
@@ -17,8 +18,41 @@ export default function SignIn() {
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  function sendOtp() {}
-  function register() {}
+  async function sendOtp() {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+    });
+    console.log(data);
+    if (error) {
+      console.log("not valid email");
+    }
+  }
+
+  async function register() {
+    try {
+      if (!otp) return;
+      const { data: verifyData, error: verifyError } =
+        await supabase.auth.verifyOtp({
+          email,
+          token: otp,
+          type: "email",
+        });
+      if (verifyError) {
+        console.error("OTP verification faild:", verifyError.message);
+      }
+      const { data: updateData, error: updateError } =
+        await supabase.auth.updateUser({
+          password,
+        });
+      if (updateError) {
+        console.error("Password update failed:", updateError.message);
+        return;
+      }
+      router.replace("/(tabs)");
+    } catch (err) {
+      console.error("Registration failed:", err);
+    }
+  }
   return (
     <View
       style={{
@@ -37,7 +71,11 @@ export default function SignIn() {
           fontFamily: AmazonEmber,
         }}
       >
-        {step === Step.EMAIL && "Create an account"}
+        {step === Step.EMAIL
+          ? "Create an account"
+          : step === Step.OTP
+          ? "Put your otp"
+          : "Set your password"}
       </Text>
       <View
         style={{
@@ -164,7 +202,7 @@ export default function SignIn() {
         }}
         disabled={email.length < 5}
       >
-        {step === Step.EMAIL ? "Continue" : "Sign up"}
+        {step === Step.EMAIL || step === Step.OTP ? "Continue" : "Sign up"}
       </DefaultButton>
       <Pressable onPress={() => router.push("/(auth)")}>
         <Text

@@ -1,17 +1,25 @@
 import DefaultButton from "@/components/Shared/DefaultButton";
+import { RootState } from "@/store";
+import { supabase } from "@/supabase";
 import { AmazonEmber } from "@/utils/Constant";
+import { glbUpload } from "@/utils/glbUpload";
+import { imageUpload } from "@/utils/imageUpload";
 import {
   AntDesign,
   Feather,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import Checkbox from "expo-checkbox";
+import { Checkbox } from "expo-checkbox";
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Pressable, ScrollView } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 export default function CreateProduct() {
+  const session = useSelector((state: RootState) => state.auth.session);
   const [name, setName] = useState<string>("");
   const [amountInStock, setAmountInStock] = useState<string>("");
   const [currentPrice, setCurrentPrice] = useState<string>("");
@@ -23,10 +31,52 @@ export default function CreateProduct() {
   const [loading, setLoading] = useState(false);
 
   const [fileUrlGLB, setFileUrlGLB] = useState<string | null>(null);
-  const pickMedia = () => {};
-  const pickAndUploadGLB = () => {};
-  const createProduct = () => {
+  const pickMedia = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("permission to access media library is required!");
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+  const pickAndUploadGLB = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: "*/*",
+      copyToCacheDirectory: true,
+    });
+    if (!result.canceled) {
+      setFileUrlGLB(result.assets[0].uri);
+    }
+  };
+  const createProduct = async () => {
+    setLoading(true);
+    const publicImageUrl = await imageUpload(imageUri);
+    const glbUrl = await glbUpload(fileUrlGLB);
     // store data to db
+    const { data, error } = await supabase
+      .from("products")
+      .insert([
+        {
+          name,
+          amountInStock,
+          currentPrice,
+          previousPrice,
+          deliveryPrice,
+          deliveryInDays,
+          isAmazonChoice,
+          imageUrl: publicImageUrl,
+          model3DUrl: glbUrl ?? null,
+          user_id: session?.user?.id,
+        },
+      ])
+      .select();
     router.back();
   };
   return (

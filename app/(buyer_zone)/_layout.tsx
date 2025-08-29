@@ -27,6 +27,15 @@ export default function Layout() {
           headerTitle: () => <HeaderTitle />,
         }}
       />
+      <Stack.Screen
+        name="buy_here"
+        options={{
+          headerShown: true,
+          header: (props) => <Header {...props} />,
+          headerLeft: () => <HeaderLeftBack onPress={onGoBack} />,
+          headerTitle: () => <HeaderTitle />,
+        }}
+      />
     </Stack>
   );
 }

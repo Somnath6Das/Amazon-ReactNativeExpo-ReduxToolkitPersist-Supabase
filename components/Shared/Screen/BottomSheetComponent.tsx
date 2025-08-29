@@ -1,8 +1,10 @@
+import { supabase } from "@/supabase";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { TouchableOpacity, View } from "react-native";
 import DefaultButton from "../DefaultButton";
@@ -16,7 +18,10 @@ export default function BottomSheetComponent({ bottomSheetRef }: any) {
   const handleClosePress = () => {
     bottomSheetRef.current?.close();
   };
-  const onClickSignOut = () => {};
+  const onClickSignOut = async () => {
+    await supabase.auth.signOut();
+    router.replace("/(tabs)");
+  };
   return (
     <BottomSheet
       index={-1}

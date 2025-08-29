@@ -1,14 +1,33 @@
 import Header from "@/components/Shared/header/Header";
+import { RootState } from "@/store";
+import { setShippedCount } from "@/store/slices/shippedCountSlice";
 import { AmazonEmberBold } from "@/utils/Constant";
+import { getUnshippedCount } from "@/utils/getUnshippedCount";
 import MCIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import { Tabs } from "expo-router";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 interface Tab {
   name: string;
   icon: "home-outline" | "account-outline" | "cart-check";
 }
 
 export default function TabLayout() {
+  const session = useSelector((state: RootState) => state.auth.session);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchCount = async () => {
+      if (session?.user.id) {
+        const count = await getUnshippedCount(session?.user.id);
+        if (count !== null) {
+          dispatch(setShippedCount(count));
+        }
+      }
+    };
+    fetchCount();
+  }, [session?.user.id]);
   const tabs: Tab[] = [
     {
       name: "index",
@@ -23,7 +42,7 @@ export default function TabLayout() {
       icon: "cart-check",
     },
   ];
-  const cartItems = "Cart Items";
+
   return (
     <Tabs>
       {tabs.map((tab) => (

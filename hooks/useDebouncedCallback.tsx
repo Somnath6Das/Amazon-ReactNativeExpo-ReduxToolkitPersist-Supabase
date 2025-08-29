@@ -6,6 +6,7 @@ export function useDebouncedCallback<T>(
   timeout: number
 ) {
   const timer = useRef<NodeJS.Timeout>();
+
   useEffect(() => {
     clearTimeout(timer.current);
     timer.current = setTimeout(callback, timeout);

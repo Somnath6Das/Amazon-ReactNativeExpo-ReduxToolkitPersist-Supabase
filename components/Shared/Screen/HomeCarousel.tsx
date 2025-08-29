@@ -53,6 +53,7 @@ export default function HomeCarousel() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
+        removeClippedSubviews
         onScroll={handleScroll}
         renderItem={({ item }) => (
           <View style={{ width }}>

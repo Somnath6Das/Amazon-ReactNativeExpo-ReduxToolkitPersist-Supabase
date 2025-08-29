@@ -10,7 +10,7 @@ export default function HeaderSearch() {
   const ref = useRef<TextInputType>(null);
   const [query, setQuery] = useState("");
   const onPressIn = () => {
-    router.push("/(search)");
+    if (segments[0] !== "(search)") router.push("/(search)");
   };
   const onGoBack = () => {
     setQuery("");
@@ -63,6 +63,7 @@ export default function HeaderSearch() {
           ref={ref}
           value={query}
           onPressIn={onPressIn}
+          onChangeText={setQuery}
           editable={segments[0] === "(search)"}
           placeholder="Search Amazon"
           style={{

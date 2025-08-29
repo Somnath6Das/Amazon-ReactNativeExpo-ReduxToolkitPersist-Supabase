@@ -1,14 +1,54 @@
+import { RootState } from "@/store";
+import { supabase } from "@/supabase";
 import { AmazonEmber } from "@/utils/Constant";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function Location() {
+  const session = useSelector((state: RootState) => state.auth.session);
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const handleNameChange = () => {};
-  const handleLocationChange = () => {};
+  const fetchText = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("location, full_name")
+      .eq("id", session?.user.id)
+      .single();
+    if (data) {
+      setLocation(data.location);
+      setName(data.full_name);
+    }
+    if (error) {
+      console.log("Fetxh error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchText();
+  }, []);
+  const handleNameChange = async (value: string) => {
+    setLoading(true);
+    setName(value);
+
+    const { error } = await supabase.from("profiles").upsert({
+      id: session?.user.id,
+      full_name: value,
+    });
+    setLoading(false);
+    if (error) console.log("Save error:", error);
+  };
+  const handleLocationChange = async (value: string) => {
+    setLoading(true);
+    setLocation(value);
+    const { error } = await supabase.from("profiles").upsert({
+      id: session?.user.id,
+      location: value,
+    });
+    setLoading(false);
+    if (error) console.log("Save error:", error);
+  };
   return (
     <View
       style={{
