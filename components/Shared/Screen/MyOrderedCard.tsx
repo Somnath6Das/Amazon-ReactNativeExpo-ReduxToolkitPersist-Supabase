@@ -61,8 +61,10 @@ export default function MyOrderedCard({ order }: { order: Order }) {
             width: "84%",
           }}
         >
-          <View style={{ width: "70%", gap: 6 }}>
+          <View style={{ width: "60%", gap: 6 }}>
             <Text
+              numberOfLines={2}
+              ellipsizeMode="tail"
               style={{
                 fontSize: 20,
                 alignSelf: "flex-start",
@@ -100,6 +102,8 @@ export default function MyOrderedCard({ order }: { order: Order }) {
           </View>
         </View>
         <Text
+          numberOfLines={2}
+          ellipsizeMode="tail"
           style={{
             fontSize: 16,
             marginTop: 6,
