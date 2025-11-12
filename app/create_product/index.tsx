@@ -52,7 +52,7 @@ export default function CreateProduct() {
       copyToCacheDirectory: true,
     });
     if (!result.canceled) {
-      setFileUrlGLB(result.assets[0].uri);
+      setFileUrlGLB(result.assets[0].uri || null);
     }
   };
   const createProduct = async () => {
@@ -72,7 +72,7 @@ export default function CreateProduct() {
           deliveryInDays,
           isAmazonChoice,
           imageUrl: publicImageUrl,
-          model3DUrl: glbUrl ?? null,
+          model3DUrl: glbUrl || null,
           user_id: session?.user?.id,
         },
       ])
